@@ -80,3 +80,9 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener("scroll", setActiveLink);
   setActiveLink(); // Call once on load
 });
+
+// Footer copyright year
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("current-year").textContent =
+    new Date().getFullYear();
+});
