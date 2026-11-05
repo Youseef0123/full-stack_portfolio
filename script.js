@@ -158,6 +158,8 @@ document.addEventListener("DOMContentLoaded", function () {
     requestAnimationFrame(function () {
       setTimeout(function () {
         const result = { type, at, response: Math.max(1, Math.round(performance.now() - at)) };
+        // Fired after measuring, so the hero's reaction doesn't slow the number down
+        window.dispatchEvent(new CustomEvent("firstinteraction", { detail: result }));
         if (!loaded) {
           pending = result;
           return;
@@ -173,29 +175,249 @@ document.addEventListener("DOMContentLoaded", function () {
   );
 });
 
-// Hero dot grid lights up around the mouse
+// Hero field: a dot grid that leans away from the cursor and carries a ripple
+// out from every click/tap (and from "interaction" on the first interaction).
+// The avatar tilts toward the cursor. Animates only while something moves.
 document.addEventListener("DOMContentLoaded", function () {
   const hero = document.querySelector(".hero");
+  const canvas = document.querySelector(".hero-field");
+  if (!hero || !canvas || !canvas.getContext) return;
+  const ctx = canvas.getContext("2d");
+  const avatar = hero.querySelector(".avatar-wrapper");
+  const word = hero.querySelector(".cover-text");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!hero || reduceMotion) return;
 
-  let frame = 0;
-  hero.addEventListener("pointermove", function (event) {
-    if (event.pointerType !== "mouse") return;
+  const GAP = 28; // grid spacing, px
+  const REACH = 170; // cursor influence radius, px
+  const WAVE_SPEED = 650; // ripple speed, px/s
+  const WAVE_LIFE = 1.5; // ripple lifetime, s
+
+  let dots = [];
+  let width = 0;
+  let height = 0;
+  let pointer = null; // mouse position while over the hero
+  const ripples = [];
+  const tilt = { x: 0, y: 0 };
+  let running = false;
+  let visible = true;
+
+  hero.classList.add("has-field");
+
+  function build() {
+    width = hero.clientWidth;
+    height = hero.clientHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    dots = [];
+    const offsetX = (width % GAP) / 2 + GAP / 2;
+    const offsetY = (height % GAP) / 2 + GAP / 2;
+    for (let y = offsetY; y < height; y += GAP) {
+      for (let x = offsetX; x < width; x += GAP) {
+        dots.push({ x, y, dx: 0, dy: 0, glow: 0 });
+      }
+    }
+    draw(performance.now());
+  }
+
+  // Draws one frame; returns true while anything is still moving
+  function draw(now) {
+    ctx.clearRect(0, 0, width, height);
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      if ((now - ripples[i].start) / 1000 > WAVE_LIFE) ripples.splice(i, 1);
+    }
+
+    let moving = ripples.length > 0;
+
+    // rAF's timestamp can be slightly older than a ripple created this frame
+    for (const r of ripples) r.t = Math.max(0, (now - r.start) / 1000);
+
+    // Faint wavefront line for each ripple
+    ctx.lineWidth = 1;
+    for (const r of ripples) {
+      const t = r.t;
+      ctx.strokeStyle = `rgba(196, 161, 255, ${(0.35 * (1 - t / WAVE_LIFE)).toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(r.x, r.y, t * WAVE_SPEED, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+
+    for (const d of dots) {
+      let tx = 0;
+      let ty = 0;
+      let glow = 0;
+
+      if (pointer) {
+        const vx = d.x - pointer.x;
+        const vy = d.y - pointer.y;
+        const dist = Math.hypot(vx, vy) || 1;
+        if (dist < REACH) {
+          const f = 1 - dist / REACH;
+          tx += (vx / dist) * f * f * 18;
+          ty += (vy / dist) * f * f * 18;
+          glow = f;
+        }
+      }
+
+      for (const r of ripples) {
+        const t = r.t;
+        const vx = d.x - r.x;
+        const vy = d.y - r.y;
+        const dist = Math.hypot(vx, vy) || 1;
+        const front = 1 - Math.abs(dist - t * WAVE_SPEED) / 70; // wave band ~70px
+        if (front > 0) {
+          const k = front * (1 - t / WAVE_LIFE);
+          tx += (vx / dist) * k * 20;
+          ty += (vy / dist) * k * 20;
+          glow = Math.max(glow, k);
+        }
+      }
+
+      // Ease toward the target so dots spring back smoothly
+      d.dx += (tx - d.dx) * 0.16;
+      d.dy += (ty - d.dy) * 0.16;
+      d.glow += (glow - d.glow) * 0.18;
+      if (Math.abs(tx - d.dx) > 0.05 || Math.abs(ty - d.dy) > 0.05 || Math.abs(glow - d.glow) > 0.01) {
+        moving = true;
+      }
+
+      if (d.glow < 0.03) {
+        ctx.fillRect(d.x + d.dx - 0.8, d.y + d.dy - 0.8, 1.6, 1.6);
+      } else {
+        ctx.fillStyle = `rgba(196, 161, 255, ${(0.15 + d.glow * 0.8).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(d.x + d.dx, d.y + d.dy, 0.9 + d.glow * 1.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+      }
+    }
+
+    // Avatar tilt eases toward the pointer, back to flat when it leaves
+    if (avatar) {
+      let targetX = 0;
+      let targetY = 0;
+      if (pointer) {
+        const box = avatar.getBoundingClientRect();
+        const heroBox = hero.getBoundingClientRect();
+        const cx = box.left - heroBox.left + box.width / 2;
+        const cy = box.top - heroBox.top + box.height / 2;
+        targetY = Math.max(-1, Math.min(1, (pointer.x - cx) / 600)) * 12;
+        targetX = Math.max(-1, Math.min(1, (pointer.y - cy) / 400)) * -9;
+      }
+      tilt.x += (targetX - tilt.x) * 0.12;
+      tilt.y += (targetY - tilt.y) * 0.12;
+      if (Math.abs(targetX - tilt.x) > 0.05 || Math.abs(targetY - tilt.y) > 0.05) moving = true;
+      avatar.style.setProperty("--tilt-x", tilt.x.toFixed(2) + "deg");
+      avatar.style.setProperty("--tilt-y", tilt.y.toFixed(2) + "deg");
+    }
+
+    return moving;
+  }
+
+  function frame(now) {
+    if (draw(now) && visible) requestAnimationFrame(frame);
+    else running = false;
+  }
+
+  function kick() {
+    if (running || !visible || reduceMotion) return;
+    running = true;
+    requestAnimationFrame(frame);
+  }
+
+  function ripple(x, y) {
+    ripples.push({ x, y, start: performance.now() });
+    kick();
+  }
+
+  function localPoint(event) {
     const rect = hero.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(function () {
-      hero.style.setProperty("--mx", x + "px");
-      hero.style.setProperty("--my", y + "px");
-      hero.classList.add("is-pointing");
-    });
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  }
+
+  build();
+  new ResizeObserver(build).observe(hero);
+  new IntersectionObserver((entries) => {
+    visible = entries[0].isIntersecting;
+    if (visible) kick();
+  }).observe(hero);
+
+  if (reduceMotion) return; // static dots only
+
+  hero.addEventListener("pointermove", (event) => {
+    if (event.pointerType !== "mouse") return;
+    pointer = localPoint(event);
+    kick();
   });
 
-  hero.addEventListener("pointerleave", function () {
-    hero.classList.remove("is-pointing");
+  hero.addEventListener("pointerleave", () => {
+    pointer = null;
+    kick();
   });
+
+  hero.addEventListener("pointerdown", (event) => {
+    const point = localPoint(event);
+    ripple(point.x, point.y);
+  });
+
+  // First interaction without a point (scroll, key press): ripple from the word
+  window.addEventListener("firstinteraction", (event) => {
+    if (!word || event.detail.type === "click" || event.detail.type === "tap") return;
+    const box = word.getBoundingClientRect();
+    const heroBox = hero.getBoundingClientRect();
+    ripple(box.left - heroBox.left + box.width / 2, box.top - heroBox.top + box.height / 2);
+  });
+});
+
+// "interaction": letters ripple and the ring redraws when the word is hovered
+document.addEventListener("DOMContentLoaded", function () {
+  const word = document.querySelector(".cover-text");
+  const label = word && word.querySelector(".cover-word");
+  const ring = word && word.querySelector(".circle-decoration path");
+  if (!word || !label) return;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Split into letters for the animation; screen readers get the whole word
+  const text = label.textContent.trim();
+  label.textContent = "";
+  const spoken = document.createElement("span");
+  spoken.className = "sr-only";
+  spoken.textContent = text;
+  const letters = document.createElement("span");
+  letters.className = "cover-letters";
+  letters.setAttribute("aria-hidden", "true");
+  [...text].forEach((char, i) => {
+    const span = document.createElement("span");
+    span.textContent = char;
+    span.style.setProperty("--i", i);
+    letters.appendChild(span);
+  });
+  label.append(spoken, letters);
+
+  if (reduceMotion) return;
+
+  function wave() {
+    if (word.classList.contains("is-waving")) return;
+    word.classList.add("is-waving");
+    if (ring) {
+      ring.style.animation = "none";
+      void ring.getBoundingClientRect(); // restart the draw animation
+      ring.style.animation = "drawRing 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards";
+    }
+  }
+
+  letters.lastElementChild.addEventListener("animationend", () => {
+    word.classList.remove("is-waving");
+  });
+
+  word.addEventListener("pointerenter", wave);
+  window.addEventListener("firstinteraction", wave);
 });
 
 // Skills orbit: skills circle the core on three tilted orbits (back = small and
@@ -244,6 +466,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function layout() {
     const width = orbit.clientWidth;
+    if (width < 120) return; // hidden or mid-resize: keep the last layout
     const small = width < 600;
     const node = small ? 44 : 60;
     const rx = width / 2 - node / 2 - 4;
@@ -266,6 +489,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function place() {
+    if (!geo) return;
     const spread = 1 - Math.pow(1 - intro, 3); // ease-out
     nodes.forEach((n) => {
       const cfg = RINGS[n.ring];
@@ -274,7 +498,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const depth = (Math.sin(n.angle) + 1) / 2; // 0 = back, 1 = front
       const isActive = n === active;
       const scale = isActive ? 1.12 : 0.78 + 0.22 * depth;
-      let opacity = 0.55 + 0.45 * depth;
+      let opacity = 0.68 + 0.32 * depth; // dark logos must stay readable at the back
       if (isActive) opacity = 1;
       else if (focusRing && n.ring !== focusRing) opacity = 0.22;
       else if (active) opacity *= 0.5;
@@ -304,6 +528,10 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!target) return;
       e.preventDefault();
       target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+      if (target.classList.contains("project-item")) {
+        target.classList.add("is-spotlit");
+        setTimeout(() => target.classList.remove("is-spotlit"), 1800);
+      }
     });
     return a;
   }
@@ -314,7 +542,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const span = document.createElement("span");
     span.className = "skill-label";
     span.textContent = label;
-    div.append(span, ...chips);
+    const list = document.createElement("div");
+    list.className = "skill-chips";
+    list.append(...chips);
+    div.append(span, list);
     return div;
   }
 
@@ -455,6 +686,88 @@ document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) running = false;
     else start();
+  });
+});
+
+// Project frames: each one "loads" its site when it scrolls into view (URL
+// types in, the bar runs until the screenshot has really loaded, then the
+// screenshot is revealed), and tilts toward the cursor with a glare.
+document.addEventListener("DOMContentLoaded", function () {
+  const section = document.querySelector(".projects-section");
+  if (!section) return;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const cards = section.querySelectorAll(".project-item");
+
+  if (!reduceMotion) {
+    section.classList.add("js-load");
+
+    const frames = section.querySelectorAll(".browser-frame");
+    frames.forEach((frame) => {
+      const url = frame.querySelector(".browser-url");
+      url.dataset.full = url.textContent;
+      url.textContent = "";
+    });
+
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    async function load(frame) {
+      const url = frame.querySelector(".browser-url");
+      const img = frame.querySelector("img");
+      const full = url.dataset.full;
+      const step = Math.max(18, 380 / full.length);
+      for (let i = 1; i <= full.length; i++) {
+        url.textContent = full.slice(0, i);
+        await wait(step);
+      }
+      frame.classList.add("is-loading");
+      // Reveal once the bar has run and the image is actually decoded
+      const ready = img.decode ? img.decode().catch(() => {}) : Promise.resolve();
+      await Promise.all([wait(650), ready]);
+      frame.classList.add("is-loaded");
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          observer.unobserve(entry.target);
+          load(entry.target);
+        });
+      },
+      { threshold: 0.35 },
+    );
+    frames.forEach((frame) => observer.observe(frame));
+  }
+
+  if (reduceMotion) return;
+
+  cards.forEach((card) => {
+    const frame = card.querySelector(".browser-frame");
+    if (!frame) return;
+    let raf = 0;
+
+    card.addEventListener("pointermove", (event) => {
+      if (event.pointerType !== "mouse") return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const box = frame.getBoundingClientRect();
+        // -1..1 from the frame centre; clamped so text-side hovers still lean it
+        const px = Math.max(-1, Math.min(1, ((event.clientX - box.left) / box.width - 0.5) * 2));
+        const py = Math.max(-1, Math.min(1, ((event.clientY - box.top) / box.height - 0.5) * 2));
+        frame.classList.add("is-tilting");
+        frame.style.setProperty("--ry", (px * 7).toFixed(2) + "deg");
+        frame.style.setProperty("--rx", (py * -5).toFixed(2) + "deg");
+        frame.style.setProperty("--gx", ((px + 1) * 50).toFixed(1) + "%");
+        frame.style.setProperty("--gy", ((py + 1) * 50).toFixed(1) + "%");
+      });
+    });
+
+    card.addEventListener("pointerleave", () => {
+      cancelAnimationFrame(raf);
+      frame.classList.remove("is-tilting");
+      frame.style.setProperty("--rx", "0deg");
+      frame.style.setProperty("--ry", "0deg");
+    });
   });
 });
 

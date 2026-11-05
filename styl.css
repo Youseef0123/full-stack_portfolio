@@ -297,34 +297,66 @@ ul {
 
 /* Radial glow effect - Removed as per user request */
 
-/* Dot grid behind the hero; the ::after copy lights up around the cursor
-   (--mx/--my are set by script.js while a mouse is over the hero) */
+/* Dot grid behind the hero. script.js swaps it for the reactive canvas
+   (.hero-field) and adds .has-field; the CSS dots are the no-JS fallback. */
 .hero::before,
-.hero::after {
-  content: "";
+.hero-field {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-size: 28px 28px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 45% 35%, #000 30%, transparent 82%);
+  mask-image: radial-gradient(ellipse 80% 70% at 45% 35%, #000 30%, transparent 82%);
 }
 
 .hero::before {
+  content: "";
+  background-size: 28px 28px;
   background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1.6px);
-  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 45% 35%, #000 25%, transparent 80%);
-  mask-image: radial-gradient(ellipse 75% 65% at 45% 35%, #000 25%, transparent 80%);
 }
 
-.hero::after {
-  background-image: radial-gradient(rgba(196, 161, 255, 0.85) 1.2px, transparent 1.8px);
-  -webkit-mask-image: radial-gradient(circle 170px at var(--mx, -999px) var(--my, -999px), #000, transparent);
-  mask-image: radial-gradient(circle 170px at var(--mx, -999px) var(--my, -999px), #000, transparent);
-  opacity: 0;
-  transition: opacity 0.4s ease;
+.hero-field {
+  display: none;
 }
 
-.hero.is-pointing::after {
-  opacity: 1;
+.hero.has-field::before {
+  display: none;
+}
+
+.hero.has-field .hero-field {
+  display: block;
+}
+
+/* Avatar leans toward the cursor (rotation set by script.js) */
+.avatar-wrapper {
+  transform: perspective(700px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+}
+
+/* "interaction": letters ripple when hovered (letters are split by script.js) */
+.cover-letters span {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cover-text.is-waving .cover-letters span {
+    animation: letterWave 0.7s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+    animation-delay: calc(var(--i) * 38ms);
+  }
+}
+
+@keyframes letterWave {
+  0% {
+    transform: none;
+  }
+
+  35% {
+    transform: translateY(-16%) rotate(-5deg);
+    color: var(--accent-text);
+  }
+
+  100% {
+    transform: none;
+  }
 }
 
 .hero-container {
@@ -1303,7 +1335,7 @@ ul {
   justify-content: center;
   gap: 14px;
   max-width: 660px;
-  min-height: 150px;
+  min-height: 200px; /* fits the fullest skill, so the page doesn't jump */
   margin: 28px auto 0;
   padding: 22px 26px;
   border-radius: 18px;
@@ -1338,17 +1370,23 @@ ul {
 }
 
 .skill-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  align-items: start;
+  gap: 10px;
 }
 
 .skill-label {
-  min-width: 92px;
+  padding-top: 5px;
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--muted);
+}
+
+.skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .skill-chip {
@@ -1381,10 +1419,16 @@ ul {
 
   .skill-detail {
     padding: 18px;
+    min-height: 150px;
+  }
+
+  .skill-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .skill-label {
-    min-width: 100%;
+    padding-top: 0;
   }
 }
 
@@ -1743,6 +1787,112 @@ ul {
 
 .project-item:hover .proj-main-img {
   transform: scale(1.03);
+}
+
+/* Frame tilts toward the cursor (--rx/--ry set by script.js) */
+.browser-frame {
+  transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition:
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.browser-frame.is-tilting {
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Light glare that follows the cursor across the screen */
+.browser-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgba(255, 255, 255, 0.16), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.browser-frame.is-tilting::before {
+  opacity: 1;
+}
+
+/* "Page load" when a frame scrolls into view: the URL types in, the bar
+   runs, then the screenshot is revealed over a skeleton. script.js adds
+   .js-load to the section only when motion is allowed. */
+.browser-bar {
+  position: relative;
+}
+
+.browser-progress {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-purple), var(--accent-text));
+  box-shadow: 0 0 10px rgba(196, 161, 255, 0.8);
+  opacity: 0;
+}
+
+.browser-frame.is-loading .browser-progress {
+  animation: loadBar 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes loadBar {
+  0% {
+    width: 0;
+    opacity: 1;
+  }
+
+  70% {
+    width: 85%;
+    opacity: 1;
+  }
+
+  100% {
+    width: 100%;
+    opacity: 0;
+  }
+}
+
+.browser-frame picture {
+  transition: clip-path 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.js-load .browser-frame:not(.is-loaded) picture {
+  clip-path: inset(0 0 100% 0);
+}
+
+/* Skeleton of a page while it "loads" */
+.browser-frame::after {
+  content: "";
+  position: absolute;
+  inset: 36px 0 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.07)) 6% 9% / 18% 5% no-repeat,
+    linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05)) 94% 9% / 34% 5% no-repeat,
+    linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)) 6% 38% / 52% 10% no-repeat,
+    linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06)) 6% 56% / 38% 5% no-repeat,
+    linear-gradient(rgba(113, 39, 186, 0.35), rgba(113, 39, 186, 0.35)) 6% 76% / 16% 9% no-repeat;
+  opacity: 0;
+  transition: opacity 0.5s ease 0.3s;
+}
+
+.js-load .browser-frame:not(.is-loaded)::after {
+  opacity: 1;
+  transition: none;
+}
+
+/* Flash on the card reached from the skills panel */
+.project-item.is-spotlit .browser-frame {
+  box-shadow:
+    0 0 0 2px var(--accent-text),
+    0 40px 90px -28px rgba(168, 85, 247, 0.8);
 }
 
 /* RTL Content Alignment (Image left, Text right-aligned) */
