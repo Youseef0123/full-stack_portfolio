@@ -6,56 +6,54 @@
     <title>Youssef Mahmoud | Full Stack Developer</title>
     <meta
       name="description"
-      content="Portfolio of Youssef Mahmoud - A Full Stack Developer"
+      content="Portfolio of Youssef Mahmoud, a Full Stack Developer building scalable web applications with React, Next.js and Node.js."
     />
+    <meta name="theme-color" content="#1a0b2e" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+    <!-- Link previews (LinkedIn, WhatsApp, ...) -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://full-stack-portfolio-drab.vercel.app/"
+    />
+    <meta
+      property="og:title"
+      content="Youssef Mahmoud | Full Stack Developer"
+    />
+    <meta
+      property="og:description"
+      content="Scalable web applications with React, Next.js and Node.js. See my projects and get in touch."
+    />
+    <meta
+      property="og:image"
+      content="https://full-stack-portfolio-drab.vercel.app/images/avatar.png"
+    />
+    <meta name="twitter:card" content="summary" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Preahvihear&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Preahvihear&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styl.css" />
   </head>
 
-  <body>
+  <body id="top">
     <!-- navbar -->
     <nav class="navbar">
       <div class="navbar-container">
         <!-- Logo -->
-        <a href="#" class="logo" target="_blank">
-          <svg
-            width="32"
-            height="32"
-            viewBox="0 0 32 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M8 8L24 8"
-              stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-            <path
-              d="M8 8L8 24"
-              stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-            <path
-              d="M8 16L20 16"
-              stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-          </svg>
+        <a href="#top" class="logo" aria-label="Youssef Mahmoud, back to top">
+          YM
         </a>
 
         <!-- Navigation Links -->
         <ul class="nav-links">
-          <li><a href="#" class="nav-link active">Home</a></li>
-          <li><a href="#skills" class="nav-link">About</a></li>
-          <li><a href="#projects" class="nav-link">Lab</a></li>
+          <li><a href="#work" class="nav-link">Experience</a></li>
+          <li><a href="#projects" class="nav-link">Projects</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
         </ul>
 
         <!-- CV Download Button -->
@@ -97,22 +95,28 @@
         <div class="hero-left">
           <!-- Avatar with gradient background -->
           <div class="avatar-wrapper">
-            <img src="images/Gradient.svg" alt="gradient" class="gradient-bg" />
-            <img src="images/avatar.png" alt="Avatar" class="avatar" />
+            <img src="images/Gradient.svg" alt="" class="gradient-bg" />
+            <img
+              src="images/avatar.png"
+              alt="Youssef Mahmoud avatar"
+              class="avatar"
+              width="220"
+              height="220"
+            />
           </div>
         </div>
 
         <!-- Right side - Main content -->
         <div class="hero-right">
           <div class="mobile-hello">
-            <span>Hello! I Am</span>
+            <span>Hello! I'm</span>
             <span class="name-highlight">Youssef Mahmoud</span>
           </div>
           <!-- Hello text with arrow pointing to avatar -->
           <div class="hello-text">
-            <span>Hello! I Am</span>
+            <span>Hello! I'm</span>
             <span class="name-highlight">Youssef Mahmoud</span>
-            <img src="images/Arrow.svg" alt="arrow" class="arrow-icon" />
+            <img src="images/Arrow.svg" alt="" class="arrow-icon" />
           </div>
 
           <p class="designer-text">A Full Stack Developer who</p>
@@ -121,38 +125,65 @@
             by its first
             <span class="cover-text">
               <span class="cover-word">interaction</span>
-              <img
-                src="images/circle.svg"
-                alt="circle"
+              <!-- Hand-drawn ring, drawn in on page load (see styl.css) -->
+              <svg
                 class="circle-decoration"
-              />
+                viewBox="0 0 188 60"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  pathLength="1"
+                  d="M91.6469 1.54128C117.56 -0.609396 141.268 0.670592 158.646 4.46679C167.338 6.36558 174.417 8.88819 179.393 11.9052C184.38 14.9293 187.16 18.3884 187.471 22.1354C187.782 25.8825 185.61 29.7533 181.19 33.5583C176.78 37.3542 170.213 41.0085 161.953 44.3142C145.439 50.9232 122.266 56.0941 96.353 58.2448C70.4398 60.3954 46.7317 59.1155 29.3542 55.3192C20.6625 53.4205 13.5831 50.8987 8.60738 47.8818C3.61992 44.8577 0.840355 41.3977 0.529364 37.6507C0.218483 33.9036 2.38969 30.0336 6.81027 26.2287C11.2205 22.4328 17.7872 18.7776 26.047 15.4719C42.5609 8.86286 65.7337 3.69196 91.6469 1.54128Z"
+                />
+              </svg>
             </span>
           </h1>
           <p class="subtitle">
             Because if the logic doesn’t impress you, what else can?
           </p>
+
+          <div class="hero-actions">
+            <a href="#projects" class="btn btn-primary">See my projects</a>
+            <a href="#contact" class="btn btn-ghost">Get in touch</a>
+          </div>
         </div>
       </div>
 
       <!-- Bottom Section -->
       <div class="hero-bottom">
-        <h2 class="role-title">
-          I'm a Full Stack Developer.<span class="cursor">|</span>
-        </h2>
-        <p class="role-description">
-          Currently, I'm a Full Stack at
-          <a href="https://intcore.com/" class="facebook-link" target="_blank">
-            <img src="icon/intcore.webp" alt="Intcore" width="16" height="16" />
-            Intcore
-          </a>
-        </p>
-
-        <div class="bio">
-          <p>A Full Stack Developer with 2+ years of hands-on experience.</p>
-          <p>
-            I build scalable and high-performance web applications that balance
-            clean architecture, user experience, and business goals.
+        <div class="hero-bottom-intro">
+          <h2 class="role-title">
+            I'm a Full Stack Developer.<span class="cursor" aria-hidden="true"
+              >|</span
+            >
+          </h2>
+          <p class="role-description">
+            Currently at
+            <a href="https://intcore.com/" class="company-link" target="_blank">
+              <img src="icon/intcore.webp" alt="" width="18" height="18" />
+              Intcore
+            </a>
           </p>
+
+          <div class="bio">
+            <p>A Full Stack Developer with 2+ years of hands-on experience.</p>
+            <p>
+              I build scalable and high-performance web applications that
+              balance clean architecture, user experience, and business goals.
+            </p>
+          </div>
+        </div>
+
+        <!-- Live log of this visit, filled in by script.js -->
+        <div class="interaction-log" role="log" aria-label="Interaction log">
+          <div class="log-bar" aria-hidden="true">
+            <span class="window-dots"><span></span><span></span><span></span></span>
+            <span class="log-title">first-interaction.log</span>
+          </div>
+          <ol class="log-lines" id="interaction-log">
+            <li><span class="log-mark">$</span> open portfolio</li>
+          </ol>
         </div>
       </div>
     </section>
@@ -164,53 +195,26 @@
 
         <div class="work-grid">
           <!-- Card 1 -->
-          <div class="work-card">
-            <div class="work-icon-wrapper">
-              <div class="work-dots">
-                <span class="dot dot-1"></span>
-                <span class="dot dot-2"></span>
-                <span class="dot dot-3"></span>
-                <span class="dot dot-4"></span>
-                <span class="dot dot-5"></span>
-              </div>
-              <img
-                src="images/work-exp/Ellipse 1.svg"
-                class="icon-glow"
-                alt="Glow"
-              />
-              <div class="work-icon">
-                <img src="icon/intcore.webp" alt="Intcore" />
-              </div>
+          <article class="work-card">
+            <div class="work-logo">
+              <img src="icon/intcore.webp" alt="Intcore" />
             </div>
             <div class="work-content">
               <h3>Full Stack Developer at Intcore</h3>
+              <p class="work-date is-current">May 2025 – Present</p>
               <p>
                 Developing scalable web applications using React, Next.js,
                 Node.js, and Express. Focused on clean components, performance
                 optimization, and API integration. Collaborating with teams to
-                deliver high-quality user experiences. May 2025 – Present
+                deliver high-quality user experiences.
               </p>
             </div>
-          </div>
+          </article>
 
           <!-- Card 2 -->
-          <div class="work-card">
-            <div class="work-icon-wrapper">
-              <div class="work-dots">
-                <span class="dot dot-1"></span>
-                <span class="dot dot-2"></span>
-                <span class="dot dot-3"></span>
-                <span class="dot dot-4"></span>
-                <span class="dot dot-5"></span>
-              </div>
-              <img
-                src="images/work-exp/Ellipse 1.svg"
-                class="icon-glow"
-                alt="Glow"
-              />
-              <div class="work-icon">
-                <img src="icon/iti.png" alt="ITI" />
-              </div>
+          <article class="work-card">
+            <div class="work-logo">
+              <img src="icon/iti.png" alt="ITI" />
             </div>
             <div class="work-content">
               <h3>Full Stack Training at ITI</h3>
@@ -222,30 +226,12 @@
                 projects.
               </p>
             </div>
-          </div>
+          </article>
 
           <!-- Card 3 -->
-          <div class="work-card">
-            <div class="work-icon-wrapper">
-              <div class="work-dots">
-                <span class="dot dot-1"></span>
-                <span class="dot dot-2"></span>
-                <span class="dot dot-3"></span>
-                <span class="dot dot-4"></span>
-                <span class="dot dot-5"></span>
-              </div>
-              <img
-                src="images/work-exp/Ellipse 1.svg"
-                class="icon-glow"
-                alt="Glow"
-              />
-              <div class="work-icon">
-                <img
-                  src="icon/route.png"
-                  alt="Route Academy"
-                  class="rout-icon"
-                />
-              </div>
+          <article class="work-card">
+            <div class="work-logo">
+              <img src="icon/route.png" alt="Route Academy" />
             </div>
             <div class="work-content">
               <h3>Training At Route Academy</h3>
@@ -258,41 +244,23 @@
                 industry trends.
               </p>
             </div>
-          </div>
+          </article>
 
           <!-- Card 4 -->
-          <div class="work-card">
-            <div class="work-icon-wrapper">
-              <div class="work-dots">
-                <span class="dot dot-1"></span>
-                <span class="dot dot-2"></span>
-                <span class="dot dot-3"></span>
-                <span class="dot dot-4"></span>
-                <span class="dot dot-5"></span>
-              </div>
-              <img
-                src="images/work-exp/Ellipse 1.svg"
-                class="icon-glow"
-                alt="Glow"
-              />
-              <div class="work-icon">
-                <img
-                  src="icon/mostaql.png"
-                  alt="Mostaql"
-                  class="mostaql-logo"
-                />
-              </div>
+          <article class="work-card">
+            <div class="work-logo">
+              <img src="icon/mostaql.png" alt="Mostaql" class="mostaql-logo" />
             </div>
             <div class="work-content">
               <h3>Freelance at Mostaql.com</h3>
+              <p class="work-date is-current">June 2022 – Present</p>
               <p>
                 Developed multiple full-stack projects focusing on scalability,
                 performance, and database optimization. Served applications with
-                daily active users and ensured seamless user experiences. June
-                2022 – Present
+                daily active users and ensured seamless user experiences.
               </p>
             </div>
-          </div>
+          </article>
         </div>
 
         <!-- View More Button -->
@@ -394,75 +362,81 @@
     <section class="skills-section" id="skills">
       <div class="container skills-container">
         <h2 class="skills-title">
-          I'm currently looking to join a
-          <span class="highlight">cross-functional</span> team<br />
+          I'm currently looking to join a cross-functional team<br />
           <span class="skills-subtitle"
             >that values improving people's lives through accessible
             design</span
           >
         </h2>
 
-        <!-- Tech Icons Grid -->
+        <!-- Tech Icons Grid (data-name shows as a label on hover) -->
         <div class="tech-icons-wrapper">
           <div class="tech-row top-row">
-            <div class="tech-item">
-              <img src="images/technology/node-js.svg" alt="Tech 1" />
+            <div class="tech-item" data-name="Node.js">
+              <img src="images/technology/node-js.svg" alt="Node.js" />
             </div>
-            <div class="tech-item">
-              <img src="images/technology/tec2.svg" alt="Tech 2" />
+            <div class="tech-item" data-name="MongoDB">
+              <img src="images/technology/tec2.svg" alt="MongoDB" />
             </div>
-            <div class="tech-item">
-              <img src="images/technology/tec3.svg" alt="Tech 3" />
+            <div class="tech-item" data-name="Express">
+              <img src="images/technology/tec3.svg" alt="Express" />
             </div>
-            <div class="tech-item">
-              <img src="images/technology/sql.svg" alt="Tech 4" />
+            <div class="tech-item" data-name="SQL">
+              <img src="images/technology/sql.svg" alt="SQL" />
             </div>
-            <div class="tech-item">
-              <img src="images/technology/tailwind.svg" alt="Tech 5" />
+            <div class="tech-item" data-name="Tailwind CSS">
+              <img src="images/technology/tailwind.svg" alt="Tailwind CSS" />
             </div>
-            <div class="tech-item">
-              <img src="images/technology/tec6.svg" alt="Tech 6" />
+            <div class="tech-item" data-name="Next.js">
+              <img src="images/technology/tec6.svg" alt="Next.js" />
             </div>
-            <div class="tech-item">
-              <img src="images/technology/html.svg" alt="Tech 7" />
+            <div class="tech-item" data-name="HTML5">
+              <img src="images/technology/html.svg" alt="HTML5" />
             </div>
           </div>
           <div class="tech-row bottom-row">
-            <div class="tech-item">
-              <img src="images/technology/tec8.svg" alt="Tech 8" />
+            <div class="tech-item" data-name="CSS3">
+              <img src="images/technology/tec8.svg" alt="CSS3" />
             </div>
-            <div class="tech-item">
-              <img src="images/technology/tec9.svg" alt="Tech 9" />
+            <div class="tech-item" data-name="JavaScript">
+              <img src="images/technology/tec9.svg" alt="JavaScript" />
             </div>
-            <div class="tech-item">
-              <img src="images/technology/tec1.svg" alt="Tech 1" />
+            <div class="tech-item" data-name="Figma">
+              <img src="images/technology/tec1.svg" alt="Figma" />
             </div>
-            <div class="tech-item">
-              <img src="images/technology/github.svg" alt="Tech 11" />
+            <div class="tech-item" data-name="GitHub">
+              <img src="images/technology/github.svg" alt="GitHub" />
             </div>
-            <div class="tech-item">
-              <img src="images/technology/tec12.svg" alt="Tech 12" />
+            <div class="tech-item" data-name="C">
+              <img src="images/technology/tec12.svg" alt="C" />
             </div>
-            <div class="tech-item">
-              <img src="images/technology/tec13.svg" alt="Tech 13" />
+            <div class="tech-item" data-name="React">
+              <img src="images/technology/tec13.svg" alt="React" />
             </div>
           </div>
         </div>
 
         <!-- Bottom Skills Illustration -->
         <div class="skills-illustration">
-          <img src="images/technology/Skills.svg" alt="Skills Decoration" />
+          <img src="images/technology/Skills.svg" alt="" />
         </div>
       </div>
     </section>
 
     <!-- Projects Section -->
     <section class="projects-section" id="projects">
+      <div class="projects-header">
+        <h2 class="section-title">Projects</h2>
+        <p class="section-lead">
+          Selected work: a film studio, real estate platforms, an online store
+          and an e-learning platform.
+        </p>
+      </div>
+
       <div class="project-container">
         <!-- Project 1 -->
         <a href="https://sail-film.com/" class="project-item" target="_blank">
           <div class="project-content">
-            <span class="featured-label">Featured Project</span>
             <h3 class="project-title">Sail Post-Production Studio</h3>
 
             <div class="project-description-box">
@@ -478,12 +452,29 @@
               </ul>
             </div>
 
-            <div class="project-actions">
-              <img
-                src="images/projects/icon-park-solid_click.svg"
-                alt="View Project"
-              />
-            </div>
+            <ul class="project-stack" aria-label="Built with">
+              <li>Next.js</li>
+              <li>Node.js</li>
+              <li>Strapi</li>
+              <li>Cloudflare R2</li>
+            </ul>
+
+            <span class="project-visit">
+              Visit live site
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M7 17L17 7M9 7h8v8" />
+              </svg>
+            </span>
           </div>
 
           <div class="project-image-area">
@@ -491,50 +482,71 @@
               <img
                 src="images/projects/Gradient.svg"
                 class="project-item-glow"
-                alt="Glow"
+                alt=""
               />
               <img
                 src="images/projects/project-background.svg"
                 class="proj-bg-shape"
-                alt="Background"
+                alt=""
               />
-              <img
-                src="images/projects/Sail.png"
-                class="proj-main-img"
-                alt="Sail website homepage preview"
-              />
+              <div class="browser-frame">
+                <div class="browser-bar" aria-hidden="true">
+                  <span class="window-dots"><span></span><span></span><span></span></span>
+                  <span class="browser-url">sail-film.com</span>
+                </div>
+                <picture>
+                  <source srcset="images/projects/Sail.webp" type="image/webp" />
+                  <img
+                    src="images/projects/Sail.png"
+                    class="proj-main-img"
+                    alt="Sail website homepage preview"
+                    width="1896"
+                    height="908"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
+              </div>
             </div>
           </div>
         </a>
 
         <!-- Project 2 -->
-        <a
-          href="https://www.thelighthousebymv.com/en"
-          class="project-item"
-          target="_blank"
-        >
+        <a href="https://www.thelighthousebymv.com/en" class="project-item" target="_blank">
           <div class="project-image-area">
             <div class="image-wrapper">
               <img
                 src="images/projects/Gradient.svg"
                 class="project-item-glow"
-                alt="Glow"
+                alt=""
               />
               <img
                 src="images/projects/project-background.svg"
                 class="proj-bg-shape"
-                alt="Background"
+                alt=""
               />
-              <img
-                src="images/projects/lightHouse.png"
-                class="proj-main-img"
-                alt="Project Preview"
-              />
+              <div class="browser-frame">
+                <div class="browser-bar" aria-hidden="true">
+                  <span class="window-dots"><span></span><span></span><span></span></span>
+                  <span class="browser-url">thelighthousebymv.com</span>
+                </div>
+                <picture>
+                  <source srcset="images/projects/lightHouse.webp" type="image/webp" />
+                  <img
+                    src="images/projects/lightHouse.png"
+                    class="proj-main-img"
+                    alt="Lighthouse Mountain View website homepage preview"
+                    width="1897"
+                    height="905"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
+              </div>
             </div>
           </div>
 
           <div class="project-content">
-            <span class="featured-label">Featured Project</span>
             <h3 class="project-title">Lighthouse Mountain View</h3>
 
             <div class="project-description-box">
@@ -554,23 +566,32 @@
               </ul>
             </div>
 
-            <div class="project-actions">
-              <img
-                src="images/projects/icon-park-solid_click.svg"
-                alt="View Project"
-              />
-            </div>
+            <ul class="project-stack" aria-label="Built with">
+              <li>Next.js</li>
+            </ul>
+
+            <span class="project-visit">
+              Visit live site
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M7 17L17 7M9 7h8v8" />
+              </svg>
+            </span>
           </div>
         </a>
 
         <!-- Project 3 -->
-        <a
-          href="https://www.dwelleo.sa/en"
-          class="project-item"
-          target="_blank"
-        >
+        <a href="https://www.dwelleo.sa/en" class="project-item" target="_blank">
           <div class="project-content">
-            <span class="featured-label">Featured Project</span>
             <h3 class="project-title">Dwelleo-Real Estate</h3>
 
             <div class="project-description-box">
@@ -591,12 +612,26 @@
               </ul>
             </div>
 
-            <div class="project-actions">
-              <img
-                src="images/projects/icon-park-solid_click.svg"
-                alt="View Project"
-              />
-            </div>
+            <ul class="project-stack" aria-label="Built with">
+              <li>Next.js</li>
+            </ul>
+
+            <span class="project-visit">
+              Visit live site
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M7 17L17 7M9 7h8v8" />
+              </svg>
+            </span>
           </div>
 
           <div class="project-image-area">
@@ -604,18 +639,31 @@
               <img
                 src="images/projects/Gradient.svg"
                 class="project-item-glow"
-                alt="Glow"
+                alt=""
               />
               <img
                 src="images/projects/project-background.svg"
                 class="proj-bg-shape"
-                alt="Background"
+                alt=""
               />
-              <img
-                src="images/projects/Dwelleo.png"
-                class="proj-main-img"
-                alt="Project Preview"
-              />
+              <div class="browser-frame">
+                <div class="browser-bar" aria-hidden="true">
+                  <span class="window-dots"><span></span><span></span><span></span></span>
+                  <span class="browser-url">dwelleo.sa</span>
+                </div>
+                <picture>
+                  <source srcset="images/projects/Dwelleo.webp" type="image/webp" />
+                  <img
+                    src="images/projects/Dwelleo.png"
+                    class="proj-main-img"
+                    alt="Dwelleo website homepage preview"
+                    width="1081"
+                    height="641"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
+              </div>
             </div>
           </div>
         </a>
@@ -627,23 +675,35 @@
               <img
                 src="images/projects/Gradient.svg"
                 class="project-item-glow"
-                alt="Glow"
+                alt=""
               />
               <img
                 src="images/projects/project-background.svg"
                 class="proj-bg-shape"
-                alt="Background"
+                alt=""
               />
-              <img
-                src="images/projects/Doors.png"
-                class="proj-main-img"
-                alt="Doors Real Estate website homepage preview"
-              />
+              <div class="browser-frame">
+                <div class="browser-bar" aria-hidden="true">
+                  <span class="window-dots"><span></span><span></span><span></span></span>
+                  <span class="browser-url">doorsre.com</span>
+                </div>
+                <picture>
+                  <source srcset="images/projects/Doors.webp" type="image/webp" />
+                  <img
+                    src="images/projects/Doors.png"
+                    class="proj-main-img"
+                    alt="Doors Real Estate website homepage preview"
+                    width="1896"
+                    height="908"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
+              </div>
             </div>
           </div>
 
           <div class="project-content">
-            <span class="featured-label">Featured Project</span>
             <h3 class="project-title">Doors Real Estate</h3>
 
             <div class="project-description-box">
@@ -656,23 +716,34 @@
               </ul>
             </div>
 
-            <div class="project-actions">
-              <img
-                src="images/projects/icon-park-solid_click.svg"
-                alt="View Project"
-              />
-            </div>
+            <ul class="project-stack" aria-label="Built with">
+              <li>Next.js</li>
+              <li>Node.js</li>
+              <li>Strapi</li>
+            </ul>
+
+            <span class="project-visit">
+              Visit live site
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M7 17L17 7M9 7h8v8" />
+              </svg>
+            </span>
           </div>
         </a>
 
         <!-- Project 5 -->
-        <a
-          href="https://www.sagcollctive.com/"
-          class="project-item"
-          target="_blank"
-        >
+        <a href="https://www.sagcollctive.com/" class="project-item" target="_blank">
           <div class="project-content">
-            <span class="featured-label">Featured Project</span>
             <h3 class="project-title">Clothes E-commerce</h3>
 
             <div class="project-description-box">
@@ -687,12 +758,27 @@
               </ul>
             </div>
 
-            <div class="project-actions">
-              <img
-                src="images/projects/icon-park-solid_click.svg"
-                alt="View Project"
-              />
-            </div>
+            <ul class="project-stack" aria-label="Built with">
+              <li>Next.js</li>
+              <li>.Net</li>
+            </ul>
+
+            <span class="project-visit">
+              Visit live site
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M7 17L17 7M9 7h8v8" />
+              </svg>
+            </span>
           </div>
 
           <div class="project-image-area">
@@ -700,46 +786,71 @@
               <img
                 src="images/projects/Gradient.svg"
                 class="project-item-glow"
-                alt="Glow"
+                alt=""
               />
               <img
                 src="images/projects/project-background.svg"
                 class="proj-bg-shape"
-                alt="Background"
+                alt=""
               />
-              <img
-                src="images/projects/e-commerce.png"
-                class="proj-main-img"
-                alt="Project Preview"
-              />
+              <div class="browser-frame">
+                <div class="browser-bar" aria-hidden="true">
+                  <span class="window-dots"><span></span><span></span><span></span></span>
+                  <span class="browser-url">sagcollctive.com</span>
+                </div>
+                <picture>
+                  <source srcset="images/projects/e-commerce.webp" type="image/webp" />
+                  <img
+                    src="images/projects/e-commerce.png"
+                    class="proj-main-img"
+                    alt="Segma Collective e-commerce website homepage preview"
+                    width="1896"
+                    height="908"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
+              </div>
             </div>
           </div>
         </a>
 
         <!-- Project 6 -->
-        <a href="#" class="project-item" target="_blank">
+        <article class="project-item">
           <div class="project-image-area">
             <div class="image-wrapper">
               <img
                 src="images/projects/Gradient.svg"
                 class="project-item-glow"
-                alt="Glow"
+                alt=""
               />
               <img
                 src="images/projects/project-background.svg"
                 class="proj-bg-shape"
-                alt="Background"
+                alt=""
               />
-              <img
-                src="images/projects/Halqa.png"
-                class="proj-main-img"
-                alt="Project Preview"
-              />
+              <div class="browser-frame">
+                <div class="browser-bar" aria-hidden="true">
+                  <span class="window-dots"><span></span><span></span><span></span></span>
+                  <span class="browser-url">Halqa website</span>
+                </div>
+                <picture>
+                  <source srcset="images/projects/Halqa.webp" type="image/webp" />
+                  <img
+                    src="images/projects/Halqa.png"
+                    class="proj-main-img"
+                    alt="Halqa website homepage preview"
+                    width="1894"
+                    height="914"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
+              </div>
             </div>
           </div>
 
           <div class="project-content">
-            <span class="featured-label">Featured Project</span>
             <h3 class="project-title">Halqa website</h3>
 
             <div class="project-description-box">
@@ -759,14 +870,13 @@
               </ul>
             </div>
 
-            <div class="project-actions">
-              <img
-                src="images/projects/icon-park-solid_click.svg"
-                alt="View Project"
-              />
-            </div>
+            <ul class="project-stack" aria-label="Built with">
+              <li>Angular</li>
+              <li>.Net</li>
+              <li>100ms</li>
+            </ul>
           </div>
-        </a>
+        </article>
       </div>
 
       <!-- View More Button -->
@@ -804,9 +914,7 @@
       <div class="container contact-container">
         <div class="contact-header">
           <span class="featured-label">What's Next?</span>
-          <h2 class="contact-title">
-            Let's Work <span class="highlight">Together</span>
-          </h2>
+          <h2 class="contact-title">Let's Work Together</h2>
           <p class="contact-subtitle">
             I'm currently looking for new opportunities. Whether you have a
             question or just want to say hi, I'll try my best to get back to
@@ -814,51 +922,36 @@
           </p>
         </div>
 
-        <div class="contact-grid">
-          <!-- Email -->
-          <a
-            href="mailto:youssefmahmoud31721@gmail.com"
-            class="contact-card"
-            target="_blank"
+        <!-- Email: the main way in, with a one-click copy -->
+        <div class="contact-email">
+          <a href="mailto:youssefmahmoud31721@gmail.com" class="email-link"
+            >youssefmahmoud31721<wbr />@gmail.com</a
           >
-            <div class="card-icon">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                ></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-            </div>
-            <div class="card-content">
-              <h3>Email Me</h3>
-              <p>Get in touch via email</p>
-            </div>
-            <div class="card-arrow">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </div>
-          </a>
+          <button
+            type="button"
+            class="copy-email"
+            data-email="youssefmahmoud31721@gmail.com"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="9" y="9" width="12" height="12" rx="2"></rect>
+              <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"></path>
+            </svg>
+            <span class="copy-label">Copy email</span>
+          </button>
+          <p class="sr-only" id="copy-status" aria-live="polite"></p>
+        </div>
 
+        <div class="contact-grid">
           <!-- LinkedIn -->
           <a
             href="https://www.linkedin.com/in/youssef-mahmuod-a0a536222/"
@@ -1001,8 +1094,7 @@
           reserved.
         </p>
         <div class="footer-links">
-          <a href="#" target="_blank">Privacy Policy</a>
-          <a href="#" target="_blank">Terms of Service</a>
+          <a href="#top">Back to top</a>
         </div>
       </div>
     </footer>
