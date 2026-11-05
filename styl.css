@@ -1027,185 +1027,364 @@ ul {
   margin-top: 12px;
 }
 
-.tech-icons-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: -50px;
+/* ===== Tech orbit ===== */
+.tech-orbit {
+  --node: 60px;
+  --cy: 50%;
   position: relative;
-  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-.tech-row {
+/* Without JS: a plain wrapped list of skills with their names */
+.orbit-rings,
+.orbit-core {
+  display: none;
+}
+
+.orbit-nodes {
   display: flex;
-  justify-content: center;
-  gap: 25px;
   flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px 22px;
+  padding-bottom: 36px;
 }
 
-.tech-item {
-  width: 60px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 50%;
-  /* Circle shape */
+.orbit-nodes li {
+  position: relative;
+}
+
+.tech-node {
+  position: relative;
+  width: var(--node);
+  height: var(--node);
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%;
+  background: rgba(30, 13, 52, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: pointer;
   transition:
-    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.3s ease,
     background-color 0.3s ease,
     box-shadow 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  position: relative;
-  backdrop-filter: blur(5px);
 }
 
-.tech-item img {
+.tech-node img {
   width: 55%;
   height: 55%;
   object-fit: contain;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 1;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
+  pointer-events: none;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.25));
 }
 
-/* Name label, shown on hover (the icons have no visible text otherwise) */
-.tech-item::after {
-  content: attr(data-name);
+.tech-name {
   position: absolute;
-  bottom: calc(100% + 10px);
+  top: calc(100% + 8px);
   left: 50%;
-  padding: 5px 10px;
-  border-radius: 8px;
-  background: var(--ink);
-  color: var(--bg-primary);
+  transform: translateX(-50%);
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: rgba(14, 6, 26, 0.92);
+  border: 1px solid var(--line);
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 700;
+  color: var(--ink);
   white-space: nowrap;
   pointer-events: none;
+}
+
+.tech-node:hover,
+.tech-node.is-active {
+  border-color: var(--accent-bright);
+  background: rgba(88, 33, 150, 0.95);
+  box-shadow:
+    0 0 0 6px rgba(168, 85, 247, 0.14),
+    0 12px 30px -8px rgba(168, 85, 247, 0.75);
+}
+
+.tech-node[aria-pressed="true"] {
+  box-shadow:
+    0 0 0 6px rgba(168, 85, 247, 0.28),
+    0 12px 30px -8px rgba(168, 85, 247, 0.9);
+}
+
+/* Live orbit (script.js adds .is-live and positions every node) */
+.tech-orbit.is-live .orbit-rings {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.tech-orbit.is-live .orbit-nodes {
+  display: block;
+  position: absolute;
+  inset: 0;
+  padding: 0;
+}
+
+.tech-orbit.is-live .orbit-nodes li {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform, opacity;
+}
+
+.tech-orbit.is-live .tech-name {
   opacity: 0;
-  transform: translate(-50%, 4px);
+  transform: translate(-50%, -4px);
   transition:
     opacity 0.2s ease,
     transform 0.2s ease;
-  z-index: 3;
 }
 
-.tech-item:hover {
-  transform: translateY(-6px);
-  background: rgba(113, 39, 186, 0.22);
-  border-color: rgba(168, 85, 247, 0.6);
-  box-shadow: 0 10px 24px -8px rgba(113, 39, 186, 0.6);
-  z-index: 3;
-}
-
-.tech-item:hover::after {
+.tech-orbit.is-live .tech-node.is-active .tech-name {
   opacity: 1;
   transform: translate(-50%, 0);
 }
 
-.tech-item:hover img {
-  transform: scale(1.1);
+.orbit-ring {
+  fill: none;
+  stroke: url(#orbit-fade);
+  stroke-width: 1;
+  transition:
+    opacity 0.3s ease,
+    stroke-width 0.3s ease;
 }
 
-/* Creating the arc/curve effect for rows */
-.top-row .tech-item:nth-child(1) {
-  margin-top: 30px;
+.orbit-ring.is-lit {
+  stroke: var(--accent-text);
+  stroke-opacity: 0.65;
+  stroke-width: 1.5;
 }
 
-.top-row .tech-item:nth-child(2) {
-  margin-top: 15px;
+.orbit-ring.is-dim {
+  opacity: 0.3;
 }
 
-.top-row .tech-item:nth-child(3) {
-  margin-top: 5px;
+/* Dashed "data" line from the core to the active skill */
+.orbit-link {
+  stroke: var(--accent-text);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 2 7;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.top-row .tech-item:nth-child(4) {
-  margin-top: 0;
+.orbit-link.is-on {
+  opacity: 0.9;
 }
 
-.top-row .tech-item:nth-child(5) {
-  margin-top: 5px;
+@media (prefers-reduced-motion: no-preference) {
+  .orbit-link.is-on {
+    animation: linkFlow 0.7s linear infinite;
+  }
 }
 
-.top-row .tech-item:nth-child(6) {
-  margin-top: 15px;
+@keyframes linkFlow {
+  to {
+    stroke-dashoffset: -9;
+  }
 }
 
-.top-row .tech-item:nth-child(7) {
-  margin-top: 30px;
+/* The core keeps the mark from the original skills illustration */
+.tech-orbit.is-live .orbit-core {
+  display: flex;
+  position: absolute;
+  left: 50%;
+  top: var(--cy);
+  z-index: 2;
+  width: clamp(76px, 11vw, 128px);
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none; /* never swallow a tap meant for a skill passing behind */
+  background: linear-gradient(180deg, rgba(48, 16, 128, 0.9), rgba(120, 64, 173, 0.75));
+  box-shadow:
+    0 0 0 1px rgba(196, 161, 255, 0.25),
+    0 0 60px rgba(118, 60, 172, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  transition: box-shadow 0.4s ease;
 }
 
-.bottom-row {
-  margin-top: -10px;
+.orbit-core::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 55%;
+  left: 50%;
+  width: 380%;
+  height: 210%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(118, 60, 172, 0.5), transparent);
+  pointer-events: none;
 }
 
-.bottom-row .tech-item:nth-child(1) {
-  margin-top: 20px;
+.orbit-core svg {
+  width: 40%;
+  filter: drop-shadow(0 1px 7px rgba(255, 255, 255, 0.45));
 }
 
-.bottom-row .tech-item:nth-child(2) {
-  margin-top: 10px;
+.tech-orbit.has-active .orbit-core {
+  box-shadow:
+    0 0 0 1px rgba(196, 161, 255, 0.5),
+    0 0 90px rgba(168, 85, 247, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
-.bottom-row .tech-item:nth-child(3) {
-  margin-top: 0;
+/* Legend: each mark is an orbit sized like the ring it names */
+.orbit-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
 }
 
-.bottom-row .tech-item:nth-child(4) {
-  margin-top: 0;
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-family);
+  font-size: 15px;
+  cursor: pointer;
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease,
+    background-color 0.3s ease;
 }
 
-.bottom-row .tech-item:nth-child(5) {
-  margin-top: 10px;
+.legend-item::before {
+  content: "";
+  width: 20px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
 }
 
-.bottom-row .tech-item:nth-child(6) {
-  margin-top: 20px;
+.legend-item[data-ring="backend"]::before {
+  width: 14px;
+  height: 6px;
 }
 
-/* Connection Lines Effect */
-/* Connection Lines Removed */
-
-.skills-illustration {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-  margin-top: -20px;
+.legend-item[data-ring="tools"]::before {
+  width: 9px;
+  height: 4px;
 }
 
-.skills-illustration img {
-  width: 100%;
-  height: auto;
-  display: block;
-  mix-blend-mode: screen;
-  /* Helps blend the glow if needed */
+.legend-item:hover,
+.legend-item.is-on {
+  color: var(--ink);
+  border-color: var(--accent-bright);
+  background: rgba(168, 85, 247, 0.1);
+}
+
+/* Where the selected skill was used */
+.skill-detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  max-width: 660px;
+  min-height: 150px;
+  margin: 28px auto 0;
+  padding: 22px 26px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  text-align: left;
+}
+
+.skill-hint {
+  text-align: center;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.skill-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+
+.skill-name {
+  font-size: 28px;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.skill-cat {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--accent-text);
+}
+
+.skill-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.skill-label {
+  min-width: 92px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.skill-chip {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(196, 161, 255, 0.25);
+  background: rgba(113, 39, 186, 0.14);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--ink);
+  transition:
+    border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.skill-chip:hover {
+  border-color: var(--accent-bright);
+  color: var(--accent-text);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .tech-item {
-    width: 45px;
-    height: 45px;
-  }
-
-  .tech-row {
-    gap: 15px;
-  }
-
   .skills-title {
     font-size: 20px;
   }
 
   .skills-section {
     padding: 60px 20px;
+  }
+
+  .skill-detail {
+    padding: 18px;
+  }
+
+  .skill-label {
+    min-width: 100%;
   }
 }
 

@@ -39,11 +39,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function setActiveLink() {
     let current = "";
+    // A section is current once its top passes a line 35% down the viewport
+    // (measuring against section height made tall sections activate too early)
+    const probe = pageYOffset + window.innerHeight * 0.35;
 
     sections.forEach((section) => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-      if (pageYOffset >= sectionTop - sectionHeight / 3) {
+      if (section.offsetTop <= probe) {
         current = section.getAttribute("id");
       }
     });
@@ -194,6 +195,266 @@ document.addEventListener("DOMContentLoaded", function () {
 
   hero.addEventListener("pointerleave", function () {
     hero.classList.remove("is-pointing");
+  });
+});
+
+// Skills orbit: skills circle the core on three tilted orbits (back = small and
+// behind the core, front = large and in front). Picking a skill pauses the
+// orbit and shows where it was used, from the button's data attributes.
+document.addEventListener("DOMContentLoaded", function () {
+  const orbit = document.getElementById("tech-orbit");
+  const detail = document.getElementById("skill-detail");
+  if (!orbit || !detail) return;
+
+  // size: fraction of the outer orbit; speed: radians per second
+  const RINGS = {
+    tools: { label: "Tools", size: 0.42, speed: 0.16 },
+    backend: { label: "Backend & data", size: 0.7, speed: -0.11 },
+    frontend: { label: "Frontend", size: 1, speed: 0.07 },
+  };
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const link = orbit.querySelector(".orbit-link");
+  const legendItems = document.querySelectorAll(".legend-item");
+  const ringEls = {};
+  orbit.querySelectorAll(".orbit-ring").forEach((el) => (ringEls[el.dataset.ring] = el));
+
+  const nodes = [...orbit.querySelectorAll(".tech-node")].map((button) => ({
+    button,
+    item: button.parentElement,
+    ring: button.dataset.ring,
+    name: button.querySelector(".tech-name").textContent,
+    angle: 0,
+    x: 0,
+    y: 0,
+  }));
+
+  // Spread each ring evenly, offset per ring so the rings don't line up
+  Object.keys(RINGS).forEach((ring, r) => {
+    const members = nodes.filter((n) => n.ring === ring);
+    members.forEach((n, i) => {
+      n.angle = (i / members.length) * Math.PI * 2 + 0.35 + r * 0.7;
+    });
+  });
+
+  let geo = null;
+  let active = null; // skill shown right now
+  let pinned = null; // skill picked with a click/tap/Enter
+  let focusRing = null; // ring highlighted from the legend
+  let intro = reduceMotion ? 1 : 0; // 0 → 1: skills fly out from the core once
+
+  function layout() {
+    const width = orbit.clientWidth;
+    const small = width < 600;
+    const node = small ? 44 : 60;
+    const rx = width / 2 - node / 2 - 4;
+    const ry = rx * (small ? 0.62 : 0.38);
+    const cy = ry + node / 2 + 8;
+    const height = Math.round(cy + ry + node / 2 + 44); // room for the label under the front node
+    orbit.style.height = height + "px";
+    orbit.style.setProperty("--node", node + "px");
+    orbit.style.setProperty("--cy", cy + "px");
+    geo = { cx: width / 2, cy, rx, ry, node };
+
+    Object.entries(RINGS).forEach(([ring, cfg]) => {
+      const el = ringEls[ring];
+      el.setAttribute("cx", geo.cx);
+      el.setAttribute("cy", geo.cy);
+      el.setAttribute("rx", rx * cfg.size);
+      el.setAttribute("ry", ry * cfg.size);
+    });
+    place();
+  }
+
+  function place() {
+    const spread = 1 - Math.pow(1 - intro, 3); // ease-out
+    nodes.forEach((n) => {
+      const cfg = RINGS[n.ring];
+      n.x = geo.cx + Math.cos(n.angle) * geo.rx * cfg.size * spread;
+      n.y = geo.cy + Math.sin(n.angle) * geo.ry * cfg.size * spread;
+      const depth = (Math.sin(n.angle) + 1) / 2; // 0 = back, 1 = front
+      const isActive = n === active;
+      const scale = isActive ? 1.12 : 0.78 + 0.22 * depth;
+      let opacity = 0.55 + 0.45 * depth;
+      if (isActive) opacity = 1;
+      else if (focusRing && n.ring !== focusRing) opacity = 0.22;
+      else if (active) opacity *= 0.5;
+
+      n.item.style.transform = `translate3d(${n.x - geo.node / 2}px, ${n.y - geo.node / 2}px, 0) scale(${scale})`;
+      n.item.style.opacity = (opacity * spread).toFixed(3);
+      n.item.style.zIndex = isActive ? 5 : depth > 0.5 ? 3 : 1; // core sits at 2
+    });
+
+    if (active) {
+      link.setAttribute("x1", geo.cx);
+      link.setAttribute("y1", geo.cy);
+      link.setAttribute("x2", active.x);
+      link.setAttribute("y2", active.y);
+    }
+  }
+
+  function chip(text, href) {
+    const a = document.createElement("a");
+    a.className = "skill-chip";
+    a.href = href;
+    a.textContent = text;
+    // Centre the target card; a plain anchor jump leaves it under the navbar
+    // while its reveal animation is still offsetting it
+    a.addEventListener("click", (e) => {
+      const target = document.querySelector(href);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+    });
+    return a;
+  }
+
+  function row(label, chips) {
+    const div = document.createElement("div");
+    div.className = "skill-row";
+    const span = document.createElement("span");
+    span.className = "skill-label";
+    span.textContent = label;
+    div.append(span, ...chips);
+    return div;
+  }
+
+  function renderDetail(n) {
+    detail.textContent = "";
+    const head = document.createElement("div");
+    head.className = "skill-head";
+    const name = document.createElement("span");
+    name.className = "skill-name";
+    name.textContent = n.name;
+    const cat = document.createElement("span");
+    cat.className = "skill-cat";
+    cat.textContent = RINGS[n.ring].label;
+    head.append(name, cat);
+    detail.append(head);
+
+    const projects = (n.button.dataset.projects || "").split(" ").filter(Boolean);
+    if (projects.length) {
+      detail.append(
+        row(
+          "Projects",
+          projects.map((id) => {
+            const title = document.querySelector(`#project-${id} .project-title`);
+            return chip(title ? title.textContent : id, `#project-${id}`);
+          }),
+        ),
+      );
+    }
+
+    const experience = (n.button.dataset.experience || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (experience.length) {
+      detail.append(row("Experience", experience.map((place) => chip(place, "#work"))));
+    }
+  }
+
+  function show(n) {
+    active = n;
+    nodes.forEach((m) => m.button.classList.toggle("is-active", m === n));
+    orbit.classList.toggle("has-active", Boolean(n));
+    link.classList.toggle("is-on", Boolean(n));
+    const litRing = n ? n.ring : focusRing;
+    Object.entries(ringEls).forEach(([ring, el]) => {
+      el.classList.toggle("is-lit", ring === litRing);
+      el.classList.toggle("is-dim", Boolean(litRing) && ring !== litRing);
+    });
+    // The panel keeps the last skill looked at, so its links stay reachable
+    // after the pointer leaves the orbit
+    if (n) renderDetail(n);
+    place();
+  }
+
+  nodes.forEach((n) => {
+    n.button.setAttribute("aria-pressed", "false");
+    n.button.addEventListener("pointerenter", (e) => {
+      if (e.pointerType === "mouse") show(n);
+    });
+    n.button.addEventListener("pointerleave", (e) => {
+      if (e.pointerType === "mouse") show(pinned);
+    });
+    n.button.addEventListener("focus", () => show(n));
+    n.button.addEventListener("blur", () => show(pinned));
+    n.button.addEventListener("click", () => {
+      pinned = pinned === n ? null : n;
+      nodes.forEach((m) => m.button.setAttribute("aria-pressed", String(m === pinned)));
+      show(pinned || n);
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && pinned) {
+      pinned.button.setAttribute("aria-pressed", "false");
+      pinned = null;
+      show(null);
+    }
+  });
+
+  legendItems.forEach((item) => {
+    const on = () => {
+      focusRing = item.dataset.ring;
+      legendItems.forEach((other) => other.classList.toggle("is-on", other === item));
+      show(active);
+    };
+    const off = () => {
+      focusRing = null;
+      item.classList.remove("is-on");
+      show(active);
+    };
+    item.addEventListener("pointerenter", on);
+    item.addEventListener("pointerleave", off);
+    item.addEventListener("focus", on);
+    item.addEventListener("blur", off);
+  });
+
+  // Slow down while the pointer is over the orbit so skills are easy to catch
+  let slow = false;
+  orbit.addEventListener("pointerenter", () => (slow = true));
+  orbit.addEventListener("pointerleave", () => (slow = false));
+
+  // Animate only while the orbit is on screen
+  let running = false;
+  let visible = false;
+  let last = 0;
+
+  function tick(now) {
+    if (!running) return;
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (intro < 1) intro = Math.min(1, intro + dt / 1.3);
+    const pace = active ? 0 : slow ? 0.25 : 1;
+    nodes.forEach((n) => (n.angle += RINGS[n.ring].speed * pace * dt));
+    place();
+    requestAnimationFrame(tick);
+  }
+
+  function start() {
+    if (running || reduceMotion || !visible || document.hidden) return;
+    running = true;
+    last = performance.now();
+    requestAnimationFrame(tick);
+  }
+
+  orbit.classList.add("is-live");
+  layout();
+  new ResizeObserver(layout).observe(orbit);
+
+  new IntersectionObserver(
+    (entries) => {
+      visible = entries[0].isIntersecting;
+      if (visible) start();
+      else running = false;
+    },
+    { threshold: 0.3 },
+  ).observe(orbit);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) running = false;
+    else start();
   });
 });
 

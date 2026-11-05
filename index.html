@@ -369,56 +369,180 @@
           >
         </h2>
 
-        <!-- Tech Icons Grid (data-name shows as a label on hover) -->
-        <div class="tech-icons-wrapper">
-          <div class="tech-row top-row">
-            <div class="tech-item" data-name="Node.js">
-              <img src="images/technology/node-js.svg" alt="Node.js" />
-            </div>
-            <div class="tech-item" data-name="MongoDB">
-              <img src="images/technology/tec2.svg" alt="MongoDB" />
-            </div>
-            <div class="tech-item" data-name="Express">
-              <img src="images/technology/tec3.svg" alt="Express" />
-            </div>
-            <div class="tech-item" data-name="SQL">
-              <img src="images/technology/sql.svg" alt="SQL" />
-            </div>
-            <div class="tech-item" data-name="Tailwind CSS">
-              <img src="images/technology/tailwind.svg" alt="Tailwind CSS" />
-            </div>
-            <div class="tech-item" data-name="Next.js">
-              <img src="images/technology/tec6.svg" alt="Next.js" />
-            </div>
-            <div class="tech-item" data-name="HTML5">
-              <img src="images/technology/html.svg" alt="HTML5" />
-            </div>
+        <!-- Tech orbit: script.js lays the skills out on three tilted orbits
+             around the core and animates them. Each skill lists where it was
+             used (project ids match the project cards' ids). Without JS this
+             is a plain wrapped list. -->
+        <div class="tech-orbit" id="tech-orbit">
+          <svg class="orbit-rings" aria-hidden="true">
+            <defs>
+              <linearGradient id="orbit-fade" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#a855f7" stop-opacity="0.08" />
+                <stop offset="1" stop-color="#c4a1ff" stop-opacity="0.5" />
+              </linearGradient>
+            </defs>
+            <ellipse class="orbit-ring" data-ring="tools" />
+            <ellipse class="orbit-ring" data-ring="backend" />
+            <ellipse class="orbit-ring" data-ring="frontend" />
+            <line class="orbit-link" />
+          </svg>
+
+          <div class="orbit-core" aria-hidden="true">
+            <svg viewBox="396 305 90 102" fill="none">
+              <rect x="402.4" y="311.7" width="76.1" height="8.1" rx="4.07" fill="#fff" />
+              <rect x="402.4" y="393.5" width="76.1" height="8.1" rx="4.07" fill="#fff" />
+              <path d="M449 315.7 417.6 355.7 449 398.5" stroke="#fff" stroke-width="8" />
+            </svg>
           </div>
-          <div class="tech-row bottom-row">
-            <div class="tech-item" data-name="CSS3">
-              <img src="images/technology/tec8.svg" alt="CSS3" />
-            </div>
-            <div class="tech-item" data-name="JavaScript">
-              <img src="images/technology/tec9.svg" alt="JavaScript" />
-            </div>
-            <div class="tech-item" data-name="Figma">
-              <img src="images/technology/tec1.svg" alt="Figma" />
-            </div>
-            <div class="tech-item" data-name="GitHub">
-              <img src="images/technology/github.svg" alt="GitHub" />
-            </div>
-            <div class="tech-item" data-name="C">
-              <img src="images/technology/tec12.svg" alt="C" />
-            </div>
-            <div class="tech-item" data-name="React">
-              <img src="images/technology/tec13.svg" alt="React" />
-            </div>
-          </div>
+
+          <ul class="orbit-nodes">
+            <!-- Tools & languages (inner orbit) -->
+            <li>
+              <button type="button" class="tech-node" data-ring="tools">
+                <img src="images/technology/github.svg" alt="" />
+                <span class="tech-name">GitHub</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="tech-node" data-ring="tools">
+                <img src="images/technology/tec1.svg" alt="" />
+                <span class="tech-name">Figma</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="tech-node" data-ring="tools">
+                <img src="images/technology/tec12.svg" alt="" />
+                <span class="tech-name">C</span>
+              </button>
+            </li>
+
+            <!-- Backend & data (middle orbit) -->
+            <li>
+              <button
+                type="button"
+                class="tech-node"
+                data-ring="backend"
+                data-projects="sail doors"
+                data-experience="Intcore, ITI"
+              >
+                <img src="images/technology/node-js.svg" alt="" />
+                <span class="tech-name">Node.js</span>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                class="tech-node"
+                data-ring="backend"
+                data-experience="Intcore, ITI"
+              >
+                <img src="images/technology/tec3.svg" alt="" />
+                <span class="tech-name">Express</span>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                class="tech-node"
+                data-ring="backend"
+                data-experience="ITI"
+              >
+                <img src="images/technology/tec2.svg" alt="" />
+                <span class="tech-name">MongoDB</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="tech-node" data-ring="backend">
+                <img src="images/technology/sql.svg" alt="" />
+                <span class="tech-name">SQL</span>
+              </button>
+            </li>
+
+            <!-- Frontend (outer orbit) -->
+            <li>
+              <button
+                type="button"
+                class="tech-node"
+                data-ring="frontend"
+                data-projects="sail lighthouse dwelleo doors segma"
+                data-experience="Intcore, ITI"
+              >
+                <img src="images/technology/tec6.svg" alt="" />
+                <span class="tech-name">Next.js</span>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                class="tech-node"
+                data-ring="frontend"
+                data-experience="Intcore, ITI"
+              >
+                <img src="images/technology/tec13.svg" alt="" />
+                <span class="tech-name">React</span>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                class="tech-node"
+                data-ring="frontend"
+                data-experience="ITI, Route Academy"
+              >
+                <img src="images/technology/tec9.svg" alt="" />
+                <span class="tech-name">JavaScript</span>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                class="tech-node"
+                data-ring="frontend"
+                data-experience="ITI, Route Academy"
+              >
+                <img src="images/technology/html.svg" alt="" />
+                <span class="tech-name">HTML5</span>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                class="tech-node"
+                data-ring="frontend"
+                data-experience="ITI, Route Academy"
+              >
+                <img src="images/technology/tec8.svg" alt="" />
+                <span class="tech-name">CSS3</span>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                class="tech-node"
+                data-ring="frontend"
+                data-experience="ITI, Route Academy"
+              >
+                <img src="images/technology/tailwind.svg" alt="" />
+                <span class="tech-name">Tailwind CSS</span>
+              </button>
+            </li>
+          </ul>
         </div>
 
-        <!-- Bottom Skills Illustration -->
-        <div class="skills-illustration">
-          <img src="images/technology/Skills.svg" alt="" />
+        <div class="orbit-legend">
+          <button type="button" class="legend-item" data-ring="frontend">
+            Frontend
+          </button>
+          <button type="button" class="legend-item" data-ring="backend">
+            Backend &amp; data
+          </button>
+          <button type="button" class="legend-item" data-ring="tools">
+            Tools
+          </button>
+        </div>
+
+        <div class="skill-detail" id="skill-detail" aria-live="polite">
+          <p class="skill-hint">Pick a skill to see where I've used it.</p>
         </div>
       </div>
     </section>
@@ -435,7 +559,7 @@
 
       <div class="project-container">
         <!-- Project 1 -->
-        <a href="https://sail-film.com/" class="project-item" target="_blank">
+        <a id="project-sail" href="https://sail-film.com/" class="project-item" target="_blank">
           <div class="project-content">
             <h3 class="project-title">Sail Post-Production Studio</h3>
 
@@ -512,7 +636,7 @@
         </a>
 
         <!-- Project 2 -->
-        <a href="https://www.thelighthousebymv.com/en" class="project-item" target="_blank">
+        <a id="project-lighthouse" href="https://www.thelighthousebymv.com/en" class="project-item" target="_blank">
           <div class="project-image-area">
             <div class="image-wrapper">
               <img
@@ -590,7 +714,7 @@
         </a>
 
         <!-- Project 3 -->
-        <a href="https://www.dwelleo.sa/en" class="project-item" target="_blank">
+        <a id="project-dwelleo" href="https://www.dwelleo.sa/en" class="project-item" target="_blank">
           <div class="project-content">
             <h3 class="project-title">Dwelleo-Real Estate</h3>
 
@@ -669,7 +793,7 @@
         </a>
 
         <!-- Project 4 -->
-        <a href="https://doorsre.com/en" class="project-item" target="_blank">
+        <a id="project-doors" href="https://doorsre.com/en" class="project-item" target="_blank">
           <div class="project-image-area">
             <div class="image-wrapper">
               <img
@@ -742,7 +866,7 @@
         </a>
 
         <!-- Project 5 -->
-        <a href="https://www.sagcollctive.com/" class="project-item" target="_blank">
+        <a id="project-segma" href="https://www.sagcollctive.com/" class="project-item" target="_blank">
           <div class="project-content">
             <h3 class="project-title">Clothes E-commerce</h3>
 
@@ -816,7 +940,7 @@
         </a>
 
         <!-- Project 6 -->
-        <article class="project-item">
+        <article id="project-halqa" class="project-item">
           <div class="project-image-area">
             <div class="image-wrapper">
               <img
